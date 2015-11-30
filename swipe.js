@@ -3,7 +3,7 @@
  */
 
 
-var swipeData = {
+var globalSwipeData = {
 	
 };
 
@@ -15,15 +15,15 @@ var swipe = {
 }
 
 
-$(document).ready(function(){
+$.fn.swipeAction = function(params){
+	globalSwipeData[params.name] = {};
+	var swipeData = globalSwipeData[params.name];
 	
-	console.log('init');
-	
-	$('.reportSwipe').on('click', function(){
+	$(this).on('click', function(){
 		alert('Download me');
 	});
 	
-	$('.reportSwipe').on('touchstart', function(e){
+	$(this).on('touchstart', function(e){
 		var id = $(this).attr('data-index');
 		
 		var touch = e.originalEvent.touches[0];
@@ -38,7 +38,7 @@ $(document).ready(function(){
 		
 	});
 	
-	$('.reportSwipe').on('touchmove', function(e){
+	$(this).on('touchmove', function(e){
 		
 		//Variables and aliases
 		var treshhold = swipe.threshold; 
@@ -53,12 +53,9 @@ $(document).ready(function(){
 		var pageY = Number(touch.pageY);
 		var lastSwipeY = Number(swipeData[id].lastSwipeY);
 		
-		
-		
 		//Order of importance:
 		// 1. If dragging (Horizontal) - DONT INTERRUPT
 		// 2. If swiping (Vertical) - DONT INTERRUPT
-		// 3. Happy wife => happy life 
 		var isDragging = (((lastSwipeX - pageX) > treshhold.drag) || ((pageX - lastSwipeX) > treshhold.drag));
 		
 		if ((!isDragging) && (((lastSwipeY - pageY) > treshhold.swipe) || ((pageY - lastSwipeY) > treshhold.swipe))) {
@@ -77,9 +74,6 @@ $(document).ready(function(){
 		var lastMoveDistance = Number(touch.pageX - swipeData[id].lastSwipeX);
 		swipeData[id].lastSwipeX = touch.pageX;
 		
-		
-		
-		
 		//FIND DIRECTION
 		var direction = 'left';
 		if (swipeData[id].lastSwipeX > touch.pageX) {
@@ -88,31 +82,22 @@ $(document).ready(function(){
 		var distance = lastMoveDistance;
 		var currentLeft = 0;
 		
-		
 		//ALTER THE DISPLAY
 		$(this).css('margin-right', ((Number($(this).css('margin-right').replace('px', ''))) + lastMoveDistance) + 'px');
 		
 		
 	});
 	
-	$('.reportSwipe').on('touchcancel', function(e){
+	$(this).on('touchcancel', function(e){
 		var id = $(this).attr('data-index');
-		
-		//Reset the display
+		//Reset display
 		$(this).css('margin-right', '0px');
-		
-		console.log("TOUCH CANCELLED");
 	});
 	
-	$('.reportSwipe').on('touchend', function(e){
+	$(this).on('touchend', function(e){
 		var id = $(this).attr('data-index');
-		
-		//Get total distance. Measure if its enough to complete the swipe.
-		
-		//Reset the display
+		//Reset display
 		$(this).css('margin-right', '0px');
-		
-		console.log("TOUCH END");
 	});
-	
-});
+		
+};
